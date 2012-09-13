@@ -45,9 +45,9 @@ def time_to_sec(time):
     #    print >> sys.stderr,"converted time: %d"%sec
     return sec
 
-SYS_USER = ['root', 'daemon', 'bin', 'sys', 'sync', 'games', 'man', 'lp', 'mail', 'news', 'uucp', 'proxy', 'www-data', 'backup', 'list', 'irc', 'gnats', 'nobody', 'libuuid', 'statd', 'Debian-exim', 'ntp', 'sshd', 'proftpd', 'ftp', 'messagebus', 'distccd', 'polkituser', 'fetchmail', 'oident', 'stunnel4', 'munin', 'usbmux', 'Debian-gdm', 'nslcd', 'colord', 'saned', 'avahi', 'pulse', 'rtkit', 'snmp']
+SYS_USER = ['root', 'daemon', 'bin', 'sys', 'sync', 'games', 'man', 'lp', 'mail', 'news', 'uucp', 'proxy', 'www-data', 'backup', 'list', 'irc', 'gnats', 'nobody', 'libuuid', 'statd', 'Debian-exim', 'ntp', 'sshd', 'proftpd', 'ftp', 'messagebus', 'distccd', 'polkituser', 'fetchmail', 'oident', 'stunnel4', 'munin', 'usbmux', 'Debian-gdm', 'nslcd', 'colord', 'saned', 'avahi', 'pulse', 'rtkit', 'snmp','wsmon']
 
-PROC_STAT=['D','R','S','T','X','Z']
+PROC_STAT=['D','R','S','T','X','Z','t']
 
 # Mapper function
 def main():
@@ -60,26 +60,32 @@ def main():
                 pass
             #elif (line_args[0] in SYS_USER) or (line_args[0]=='wsmon'):
             #    pass
-            else:
+            elif len(line_args)>=14:
                 #print line_args
-                out['uid']=int(line_args[1]) #changed from user name to uid
-                out['pid']=int(line_args[2])
-                out['cpu']=float(line_args[3])
-                out['mem']=float(line_args[4])
-                out['pri']=int(line_args[5]) #priority number, higher means lower priority
-                out['vsz']=int(line_args[7])
-                out['rss']=int(line_args[8])
-                out['stat']=PROC_STAT.index(line_args[10]) #return an index number of process status
-                out['sysuser'] = 0
-                if line_args[0] in SYS_USER:
-                    out['sysuser'] =1   #return 1 if the process is executed by system users
-                out['time']=time_to_sec(line_args[12])
-                out['cmd']=''
-                for string in line_args[13:]:
-                    out['cmd'] = out['cmd']+' '+string
-                m=hashlib.md5()
-                m.update(str(out['uid'])+str(out['pid'])+str(out['cmd']))
-                out['key']=m.hexdigest()
-                print '%s\t%.2f %.2f %d %d %d %d %d %d %s'%(out['key'],out['cpu'],out['mem'],out['pri'],out['vsz'],out['rss'],out['stat'],out['sysuser'],out['time'],out['cmd'])
+                try:
+                    out['uid']=line_args[1] #changed from user name to uid
+                    out['pid']=int(line_args[2])
+                    out['cpu']=float(line_args[3])
+                    out['mem']=float(line_args[4])
+                    out['pri']=int(line_args[5]) #priority number, higher means lower priority
+                    out['vsz']=int(line_args[7])
+                    out['rss']=int(line_args[8])
+                    out['stat']=PROC_STAT.index(line_args[10]) #return an index number of process status
+                    out['sysuser'] = 0
+                    if line_args[0] in SYS_USER:
+                        out['sysuser'] =1   #return 1 if the process is executed by system users
+                    out['time']=time_to_sec(line_args[12])
+                    out['cmd']=''
+                    for string in line_args[13:]:
+                        out['cmd'] = out['cmd']+' '+string
+                    m=hashlib.md5()
+                    m.update(out['uid']+str(out['pid'])+str(out['cmd']))
+                    out['key']=m.hexdigest()
+                    print '%s\t%.2f %.2f %d %d %d %d %d %d %s'%(out['key'],out['cpu'],out['mem'],out['pri'],out['vsz'],out['rss'],out['stat'],out['sysuser'],out['time'],out['cmd'])
+                except:
+                    print >> sys.stderr,"error occured!"
+                    print >> sys.stderr,line
+                    pass
+
 if __name__ == "__main__":
     main()

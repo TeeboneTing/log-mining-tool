@@ -6,9 +6,10 @@
 #   Teebone Ding @Graduate Institute of Networking and Multimedia, National Taiwan University
 
 #Latest Update Date:
-#   2012 AUG 31
+#   2012 SEP 10
 
 #Modify History: 
+#   2012 SEP 10: change input format (from aggregated ps_reduced log file, NOT pure cmd args per line)
 #   2012 AUG 31: Add code description and comments
 #   2012 AUG 30: latest code
 
@@ -23,8 +24,13 @@ freq = {}
 #except:
 #    print "usage: %s process name"%(sys.argv[0])
 for line in sys.stdin:
-    key = line.split()[0].split('/')[-1]
-    line = line[:-1]
+    proc = line.split()[0]
+    if proc.startswith('['):
+        key = proc
+    else:
+        key = proc.split('/')[-1]
+    
+    #line = line[:-1]
     #if key == proc:
     #    print line
     if freq.has_key(key):

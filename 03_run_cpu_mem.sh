@@ -11,15 +11,17 @@
 #   2012 AUG 31
 
 #Modify History: 
+#   2012 SEP 11: modify input directory/files
 #   2012 AUG 31: add code description and comments
 #   2012 MAY 21: latest code
 
-#months
-for((j=5;j<=8;j=j+1))
+#from 2012 08
+#DATE
+for((j=19;j<=19;j=j+1))
 do
     # No. of machines
-    for((i=1;i<=15;i=i+1))
+    for((i=1;i<=20;i=i+1))
     do
-        ./03_cpu_mem.py < 20110$j\_ps/20110$j.linux$i.log > local_result/20110$j\_ps_cpu_mem/20110$j.linux$i.cpumem.log
+        ./03_cpu_mem.py < ./201208_ps/201208-$j.linux$i.log > local_result/201208_ps_cpu_mem/201208-$j.linux$i.cpumem.log
     done
 done
